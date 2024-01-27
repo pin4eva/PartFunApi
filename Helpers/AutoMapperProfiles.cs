@@ -19,5 +19,9 @@ public class AutoMapperProfiles : Profile
     CreateMap<Category, GetCategoryDTO>();
     CreateMap<CreateCategoryDTO, Category>();
     CreateMap<UpdateCategoryDTO, Category>();
+
+    // Product Category
+
+    CreateMap<ProductCategory, GetProductCategory>();
   }
 }

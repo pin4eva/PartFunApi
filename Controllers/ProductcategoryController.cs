@@ -1,3 +1,5 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,19 +9,19 @@ using PartyFunApi.Extensions;
 using PartyFunApi.Model;
 
 namespace PartyFunApi.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/v1/product-categories")]
-public class ProductcategoryController(DataContext db) : ControllerBase
+public class ProductCategoryController(DataContext db, IMapper mapper) : ControllerBase
 {
-  [HttpGet]
+  [HttpGet, AllowAnonymous]
   public async Task<ActionResult<List<ProductCategory>>> GetProductcategories()
   {
     var productCategories = await db.ProductCategories.ToListAsync();
     return productCategories;
   }
 
-  [HttpGet("id/{id}")]
+  [HttpGet("id/{id}"), AllowAnonymous]
   public async Task<ActionResult<ProductCategory>> GetProductcategory(int id)
   {
     var productCategory = await db.ProductCategories.FindAsync(id);
@@ -27,29 +29,31 @@ public class ProductcategoryController(DataContext db) : ControllerBase
 
     return productCategory;
   }
-  [Authorize]
+
   [HttpPost]
-  public async Task<ActionResult<ProductCategory>> CreateProductCategory(CreateProductCategoryDTO input)
+  public async Task<ActionResult<GetProductCategory>> CreateProductCategory(CreateProductCategoryDTO input)
   {
     var existingProductCategory = await db.ProductCategories.Where((pc) => pc.Name.ToLower() == input.Name.ToLower()).FirstOrDefaultAsync();
     if (existingProductCategory is not null) return BadRequest("Duplication product category exist already");
 
-    ProductCategory category = new()
+    var category = await db.Categories.FindAsync(input.CategoryId);
+    if (category is null) return NotFound("Please input a valid category id");
+    ProductCategory productCategory = new()
     {
       Guid = Guid.NewGuid(),
       Slug = input.Name.Slugify(),
       Name = input.Name,
-      CategoryId = input.CategoryId
+      CategoryId = category.Id
     };
 
-    db.ProductCategories.Add(category);
+    db.ProductCategories.Add(productCategory);
     await db.SaveChangesAsync();
-
-    return category;
+    var mappedCat = mapper.Map<GetProductCategory>(productCategory);
+    return mappedCat;
   }
 
 
-  [Authorize]
+
   [HttpPut]
   public async Task<ActionResult<ProductCategory>> UpdateProductCategory(UpdateProductCategoryDTO input)
   {

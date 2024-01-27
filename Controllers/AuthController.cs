@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PartyFunApi.DTO;
 using PartyFunApi.Repositories;
@@ -29,7 +30,7 @@ public class AuthController(IAuthService authService, IUserRepository userReposi
     return Ok(responseDTO);
   }
 
-  [HttpGet("me")]
+  [HttpGet("me"), Authorize]
   public async Task<ActionResult> Me()
   {
     var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
