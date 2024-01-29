@@ -30,6 +30,7 @@ public class ProductCategoryController(DataContext db, IMapper mapper) : Control
     return productCategory;
   }
 
+
   [HttpPost]
   public async Task<ActionResult<GetProductCategory>> CreateProductCategory(CreateProductCategoryDTO input)
   {

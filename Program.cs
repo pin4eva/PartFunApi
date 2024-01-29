@@ -39,6 +39,8 @@ catch (Exception ex)
 // }
 
 app.MapUserRoute();
+app.MapProductRoute();
+// app.MapProductRoute();
 
 app.UseSwagger();
 app.UseSwaggerUI();

@@ -23,5 +23,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
   public required DbSet<ProductCategory> ProductCategories { get; set; }
   public required DbSet<Product> Products { get; set; }
   public required DbSet<Category> Categories { get; set; }
-  public required DbSet<ProductGroup> ProductGroups { get; set; }
+
+  public required DbSet<ProductImage> ProductImages { get; set; }
+  public required DbSet<Sales> Sales { get; set; }
 }

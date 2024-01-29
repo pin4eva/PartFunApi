@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PartyFunApi.Data;
@@ -12,9 +13,11 @@ using PartyFunApi.Data;
 namespace PartyFunApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240129145215_UsingHasSetsForTags")]
+    partial class UsingHasSetsForTags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,7 +114,7 @@ namespace PartyFunApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<List<string>>("Tags")
+                    b.Property<HashSet<string>>("Tags")
                         .IsRequired()
                         .HasColumnType("text[]");
 

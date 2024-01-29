@@ -23,5 +23,12 @@ public class AutoMapperProfiles : Profile
     // Product Category
 
     CreateMap<ProductCategory, GetProductCategory>();
+
+    // Products
+
+    CreateMap<Product, GetProductDTO>();
+    CreateMap<Product, GetProductsDTO>();
+    CreateMap<CreateProductDTO, Product>();
+    CreateMap<UpdateProductDTO, Product>();
   }
 }
