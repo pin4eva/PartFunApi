@@ -108,10 +108,10 @@ public static class ProductRoute
     // get by product category products
     group.MapGet("/category/{id}", async (int id, DataContext db, IMapper mapper) =>
     {
-      var product = await db.Products.ProjectTo<GetProductDTO>(mapper.ConfigurationProvider).FirstOrDefaultAsync(p => p.Id == id);
-      if (product is null) return Results.NotFound("Product not found");
+      var products = await db.Products.ProjectTo<GetProductsDTO>(mapper.ConfigurationProvider).Where(p => p.ProductCategoryId == id).ToListAsync();
 
-      return Results.Ok(product);
+
+      return Results.Ok(products);
     }).WithName("GetProductsByCategory");
     // get product
     group.MapGet("/id/{id}", async (DataContext db, int id, IMapper mapper) =>
@@ -133,6 +133,8 @@ public static class ProductRoute
       if (product is null) return Results.NotFound("Product not found");
 
       db.Products.Remove(product);
+
+      await db.SaveChangesAsync();
 
       return Results.Ok(id);
     }).RequireAuthorization().WithName("DeleteProduct");
