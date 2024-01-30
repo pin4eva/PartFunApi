@@ -70,7 +70,7 @@ public static class ProductRoute
 
       HashSet<string> tags = [.. product.Tags];
 
-      if (input.Tags.Count > 0)
+      if (input?.Tags?.Count > 0)
       {
         foreach (string t in input.Tags)
         {
@@ -78,12 +78,12 @@ public static class ProductRoute
         }
       }
 
-      product.Name = input.Name ?? product.Name;
+      product.Name = input?.Name ?? product.Name;
       product.Sku = input?.Sku ?? product.Sku;
       product.Brand = input?.Brand ?? product.Brand;
       var slug = (product.Brand + " " + product.Name + " " + product.Sku).Slugify();
       product.Slug = slug;
-      product.Tags = tags.ToList();
+      product.Tags = [.. tags];
       product.Color = input?.Color ?? product?.Color;
       product.Size = input?.Size ?? product?.Size;
       product.Description = input?.Description ?? product.Description;

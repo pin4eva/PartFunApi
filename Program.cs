@@ -40,6 +40,7 @@ catch (Exception ex)
 
 app.MapUserRoute();
 app.MapProductRoute();
+app.MapSalesRoute();
 // app.MapProductRoute();
 
 app.UseSwagger();

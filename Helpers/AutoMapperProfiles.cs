@@ -30,5 +30,13 @@ public class AutoMapperProfiles : Profile
     CreateMap<Product, GetProductsDTO>();
     CreateMap<CreateProductDTO, Product>();
     CreateMap<UpdateProductDTO, Product>();
+
+    // Sales
+
+    CreateMap<Sales, GetAllSalesDTO>();
+    CreateMap<Sales, GetSingleSalesDTO>();
+    CreateMap<CreateSalesDTO, Sales>();
+    CreateMap<UpdateSalesDTO, Sales>();
+
   }
 }
