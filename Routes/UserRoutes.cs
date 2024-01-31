@@ -4,6 +4,7 @@ using PartyFunApi.Data;
 using PartyFunApi.DTO;
 using PartyFunApi.Model;
 using PartyFunApi.Repositories;
+using PartyFunApi.Services;
 
 namespace PartyFunApi.Routes;
 
@@ -88,6 +89,25 @@ public static class UserRoutes
       }
 
       ).WithName("UpdateUser");
+
+
+
+    group.MapPost("/upload-avatar/{id}", async (DataContext db, IFormFile file, IImageService imageService, int id) =>
+       {
+         var user = await db.Users.FindAsync(id);
+         if (user is null) return Results.NotFound("Invalid user id");
+
+         var results = await imageService.AddImageUploadAsync(file);
+         if (results.ErrorMessage != null) return Results.BadRequest(results.ErrorMessage);
+
+         var url = results.Url;
+         user.Avatar = url;
+         user.AvatarPublicId = results.PublicId;
+         await db.SaveChangesAsync();
+
+         return Results.Ok(url);
+       }).RequireAuthorization().WithName("UploadAvatar").DisableAntiforgery();
+
     return group;
   }
 }

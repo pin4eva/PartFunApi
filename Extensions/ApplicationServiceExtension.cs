@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PartyFunApi.Repositories;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using PartyFunApi.Services;
 
 namespace PartyFunApi.Extensions;
 
@@ -14,10 +17,13 @@ public static class ApplicationServiceExtensions
 
     services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+
+
     // custom services
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IAuthService, AuthService>();
     services.AddScoped<ICategoryRepo, CategoryRepository>();
+    services.AddScoped<IImageService, ImageService>();
 
     // Swagger
     services.AddSwaggerGen(option =>

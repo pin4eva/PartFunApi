@@ -9,6 +9,8 @@ public class User
   public Guid Guid { get; set; } = Guid.NewGuid();
   public required string Name { get; set; } = string.Empty;
   public required string Gender { get; set; } = string.Empty;
+  public string Avatar { get; set; } = string.Empty;
+  public string AvatarPublicId { get; set; } = string.Empty;
   public required string Email { get; set; }
   public bool IsEmailVerified { get; set; }
   [JsonIgnore]
