@@ -27,7 +27,9 @@ public class AutoMapperProfiles : Profile
     // Products
 
     CreateMap<Product, GetProductDTO>();
-    CreateMap<Product, GetProductsDTO>();
+
+    CreateMap<Product, GetProductsDTO>().ForMember(dest => dest.Image, opt =>
+    opt.MapFrom(src => src.Images.FirstOrDefault(image => image.IsMain).ImageUrl));
     CreateMap<CreateProductDTO, Product>();
     CreateMap<UpdateProductDTO, Product>();
 
@@ -37,6 +39,10 @@ public class AutoMapperProfiles : Profile
     CreateMap<Sales, GetSingleSalesDTO>();
     CreateMap<CreateSalesDTO, Sales>();
     CreateMap<UpdateSalesDTO, Sales>();
+
+    // Product Images
+    CreateMap<ProductImage, GetProductImagesDTO>();
+    CreateMap<ProductImage, GetProductImageDTO>();
 
   }
 }

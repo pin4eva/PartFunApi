@@ -19,7 +19,7 @@ public class ImageService : IImageService
     cloudinary = _cloudinary;
   }
 
-  public async Task<UploadImageResponseDTO> AddImageUploadAsync(IFormFile file)
+  public async Task<UploadImageResponseDTO> AddImageUploadAsync(IFormFile file, Transformation? inputDTO)
   {
     var uploadResult = new ImageUploadResult();
 
@@ -30,10 +30,14 @@ public class ImageService : IImageService
       ImageUploadParams uploadParams = new()
       {
         File = new FileDescription(file.FileName, stream),
-        Folder = "PartyFun"
+        Folder = "PartyFun",
+        Transformation = inputDTO
       };
 
+
+
       uploadResult = await cloudinary.UploadAsync(uploadParams);
+
     }
 
     var response = new UploadImageResponseDTO
@@ -45,6 +49,7 @@ public class ImageService : IImageService
 
     return response;
   }
+
 
   public async Task<DeletionResult> DeleteImageUploadAsync(string publicId)
   {
@@ -58,10 +63,18 @@ public class ImageService : IImageService
     List<UploadImageResponseDTO> results = [];
     foreach (IFormFile file in files)
     {
-      var result = await AddImageUploadAsync(file);
+      var result = await AddImageUploadAsync(file, null);
       results.Add(result);
     }
 
     return results;
+  }
+
+  public async Task<UploadImageResponseDTO> UploadUserAvatar(IFormFile file)
+  {
+    var transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face");
+    var data = await AddImageUploadAsync(file, transformation);
+
+    return data;
   }
 }

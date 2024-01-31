@@ -1,11 +1,13 @@
 using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PartyFunApi.Data;
 using PartyFunApi.DTO;
 using PartyFunApi.Extensions;
 using PartyFunApi.Model;
+using PartyFunApi.Services;
 
 namespace PartyFunApi.Routes;
 
@@ -116,7 +118,7 @@ public static class ProductRoute
     // get product
     group.MapGet("/id/{id}", async (DataContext db, int id, IMapper mapper) =>
     {
-      var product = await db.Products.ProjectTo<GetProductDTO>(mapper.ConfigurationProvider).FirstOrDefaultAsync(p => p.Id == id);
+      var product = await db.Products.Include(pro => pro.Images).ProjectTo<GetProductDTO>(mapper.ConfigurationProvider).FirstOrDefaultAsync(p => p.Id == id);
 
 
       if (product is null) return Results.NotFound("Product not found");
@@ -138,6 +140,69 @@ public static class ProductRoute
 
       return Results.Ok(id);
     }).RequireAuthorization().WithName("DeleteProduct");
+
+    group.MapGet("/images/{productId}", async (int productId, DataContext db) =>
+    {
+      var images = await db.ProductImages.Where(i => i.ProductId == productId).ToListAsync();
+
+      return images;
+
+    }).WithName("GetProductImages");
+
+    group.MapPost("/images", async ([FromForm] UploadProductImageDTO input, IImageService imageService, DataContext db) =>
+    {
+      var product = await db.Products.FindAsync(input.ProductId);
+      if (product is null) return Results.NotFound($"Product with id {input.ProductId} not found");
+      var responses = await imageService.UploadBulkAsync(input.Files);
+
+
+      List<string> data = [];
+
+      foreach (var res in responses)
+      {
+        ProductImage productImage = new()
+        {
+          ProductId = product.Id,
+          ImageUrl = res.Url,
+          PublidId = res.PublicId
+        };
+        data.Add(res.Url);
+        db.ProductImages.Add(productImage);
+      }
+
+      await db.SaveChangesAsync();
+
+      return Results.Ok(data);
+    }).DisableAntiforgery().RequireAuthorization().WithName("Upload Images");
+
+    group.MapPut("/images", async (DataContext db, SetMainProductImageDTO input) =>
+        {
+          var image = await db.ProductImages.FindAsync(input.Id);
+          if (image is null) return Results.NotFound($"image with id {input.Id} not found");
+
+          var mainImages = await db.ProductImages.Where(img => img.IsMain && img.ProductId == image.ProductId).ToListAsync();
+          foreach (var img in mainImages)
+          {
+            img.IsMain = false;
+          }
+
+          image.IsMain = true;
+
+          await db.SaveChangesAsync();
+
+          return Results.NoContent();
+        }).RequireAuthorization().WithName("Set main image");
+    group.MapDelete("/images/{id}", async (int id, DataContext db) =>
+        {
+          var image = await db.ProductImages.FindAsync(id);
+          if (image is null) return Results.NotFound($"image with id {id} not found");
+          db.ProductImages.Remove(image);
+
+          await db.SaveChangesAsync();
+
+          return Results.Ok(id);
+
+        }).RequireAuthorization().WithName("DeleteProductImages");
     return group;
   }
 }

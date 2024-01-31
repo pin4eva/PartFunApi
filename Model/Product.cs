@@ -29,7 +29,7 @@ public class Product
   public int? UpdatedById { get; set; }
   public User AddedBy { get; set; } = null!;
   public User? UpdatedBy { get; set; }
-  public string? ImageUrl { get; set; }
+  // public string? ImageUrl { get; set; }
 
   public virtual ICollection<ProductImage> Images { get; set; } = [];
 

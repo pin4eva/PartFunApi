@@ -19,6 +19,11 @@ public class GetProductImagesDTO
   public bool IsMain { get; set; } = false;
 }
 
+public class UploadImageTransformationInputDTO
+{
+  public int? Width { get; set; } = null;
+  public int? Height { get; set; } = null;
+}
 
 public class UploadImageResponseDTO
 {
@@ -27,3 +32,13 @@ public class UploadImageResponseDTO
   public required string Url { get; set; }
   public string? ErrorMessage { get; set; }
 }
+
+public class UploadProductImageDTO
+{
+  public int ProductId { get; set; }
+
+  public required IFormFileCollection Files { get; set; }
+}
+
+
+public record SetMainProductImageDTO(int Id);

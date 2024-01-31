@@ -10,6 +10,7 @@ public class GetProductsDTO
   public required string Sku { get; set; } // 00001
   public required string Name { get; set; }
   public string Slug { get; set; } = string.Empty;
+  public string Image { get; set; } = string.Empty;
   public string? Size { get; set; } = string.Empty;
   public string? Color { get; set; } = string.Empty;
   public required string Brand { get; set; }
@@ -29,6 +30,7 @@ public class GetProductDTO : GetProductsDTO
   public int MinimumQuantity { get; set; }
   public int AddedById { get; set; }
   public int? UpdatedById { get; set; }
+  public List<GetProductImagesDTO> Images { get; set; } = [];
 }
 
 

@@ -97,7 +97,7 @@ public static class UserRoutes
          var user = await db.Users.FindAsync(id);
          if (user is null) return Results.NotFound("Invalid user id");
 
-         var results = await imageService.AddImageUploadAsync(file);
+         var results = await imageService.UploadUserAvatar(file);
          if (results.ErrorMessage != null) return Results.BadRequest(results.ErrorMessage);
 
          var url = results.Url;
